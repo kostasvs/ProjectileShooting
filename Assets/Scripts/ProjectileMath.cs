@@ -61,9 +61,20 @@ public static class ProjectileMath
     {
         float ySpeed = speed * Mathf.Sin(angle);
 
-        float time = (ySpeed + Mathf.Sqrt((ySpeed * ySpeed) + 2 * gravity * yOffset)) / gravity;
+        float discriminant = (ySpeed * ySpeed) - 2 * gravity * yOffset;
+        if (discriminant < 0f)
+            return float.NaN; // no valid solution
 
-        return time;
+        float sqrtDisc = Mathf.Sqrt(discriminant);
+
+        // Two possible times: (ySpeed ± sqrtDisc) / gravity
+        float t1 = (ySpeed + sqrtDisc) / gravity;
+        float t2 = (ySpeed - sqrtDisc) / gravity;
+
+        // Return the positive, larger one (impact time)
+        float time = Mathf.Max(t1, t2);
+
+        return time >= 0f ? time : float.NaN;
     }
 
     /// <summary>
